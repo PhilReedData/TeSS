@@ -8,7 +8,7 @@ class EdamControllerTest < ActionController::TestCase
     assert_response :success
 
     res = JSON.parse(response.body)
-    assert_equal 2, res.length
+    assert_equal 3, res.length
     assert_includes res.map { |t| t['preferred_label'] }, 'Metabolomics'
   end
 
@@ -54,10 +54,10 @@ class EdamControllerTest < ActionController::TestCase
   end
 
   test 'should filter out deprecated terms' do
-    # <Edam::Term @ontology=Edam::OldOntology, @uri=http://edamontology.org/operation_0467, label: Protein secondary structure prediction (integrated)>
-    # <Edam::Term @ontology=Edam::OldOntology, @uri=http://edamontology.org/operation_0421, label: Protein folding site prediction>
-    # <Edam::Term @ontology=Edam::OldOntology, @uri=http://edamontology.org/operation_3088, label: Protein property calculation (from sequence)>
-    # <Edam::Term @ontology=Edam::OldOntology, @uri=http://edamontology.org/operation_2506, label: Protein sequence alignment analysis>
+    # <Edam::Term @ontology=Edam::Ontology, @uri=http://edamontology.org/operation_0467, label: Protein secondary structure prediction (integrated)>
+    # <Edam::Term @ontology=Edam::Ontology, @uri=http://edamontology.org/operation_0421, label: Protein folding site prediction>
+    # <Edam::Term @ontology=Edam::Ontology, @uri=http://edamontology.org/operation_3088, label: Protein property calculation (from sequence)>
+    # <Edam::Term @ontology=Edam::Ontology, @uri=http://edamontology.org/operation_2506, label: Protein sequence alignment analysis>
     deprecated_protein_operation_uris = %w(
     http://edamontology.org/operation_0467
     http://edamontology.org/operation_0421
