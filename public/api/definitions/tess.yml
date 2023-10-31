@@ -302,7 +302,7 @@ paths:
               type: string
         - name: licence[]
           in: query
-          description: Filter by licence. See http://licenses.opendefinition.org/licenses/groups/all.json
+          description: Filter by licence. Uses SPDX identifiers.
           style: form
           explode: true
           schema:
@@ -568,7 +568,7 @@ paths:
               type: string
         - name: licence[]
           in: query
-          description: Filter by licence. See http://licenses.opendefinition.org/licenses/groups/all.json
+          description: Filter by licence. Uses SPDX identifiers.
           style: form
           explode: true
           schema:
@@ -801,6 +801,7 @@ components:
       allOf:
         - $ref: '#/components/schemas/JsonApiResponse'
         - type: object
+          additionalProperties: false
           properties:
             data:
               $ref: '#/components/schemas/EventResource'
@@ -808,11 +809,13 @@ components:
       allOf:
         - $ref: '#/components/schemas/ResourceObject'
         - type: object
+          additionalProperties: false
           properties:
             attributes:
               $ref: '#/components/schemas/EventAttributes'
             relationships:
               type: object
+              additionalProperties: false
               properties:
                 user:
                   $ref: '#/components/schemas/SingleRelationshipObject'
@@ -820,17 +823,24 @@ components:
                   $ref: '#/components/schemas/OptionalRelationshipObject'
                 nodes:
                   $ref: '#/components/schemas/MultiRelationshipObject'
+                collections:
+                  $ref: '#/components/schemas/MultiRelationshipObject'
+                materials:
+                  $ref: '#/components/schemas/MultiRelationshipObject'
             links:
               type: object
+              additionalProperties: false
               allOf:
                 - $ref: '#/components/schemas/Links'
                 - type: object
+                  additionalProperties: false
                   properties:
                     redirect:
                       type: string
                       description: A redirect to the actual event's URL, via TeSS.
     EventAttributes:
       type: object
+      additionalProperties: false
       required:
         - title
         - url
@@ -946,13 +956,13 @@ components:
         scientific-topics:
           type: array
           description: The classification of the event based on the EDAM ontology's
-            scientific topics.
+            topics branch.
           items:
             $ref: '#/components/schemas/OntologyTerm'
         operations:
           type: array
           description: The classification of the event based on the EDAM ontology's
-            operations.
+            operations branch.
           items:
             $ref: '#/components/schemas/OntologyTerm'
         external-resources:
@@ -964,19 +974,23 @@ components:
             $ref: '#/components/schemas/ExternalResource'
         report:
           type: object
+          additionalProperties: false
           properties:
             funding:
               type: string
               nullable: true
               description: Details on who funded the event.
-            attendee_count:
+            attendee-count:
               type: integer
+              nullable: true
               description: The number of people who attended the event.
-            applicant_count:
+            applicant-count:
               type: integer
+              nullable: true
               description: The number of people who applied to attend the event.
-            trainer_count:
+            trainer-count:
               type: integer
+              nullable: true
               description: The number of trainers who were involved with the event.
             feedback:
               type: string
@@ -1047,10 +1061,23 @@ components:
           type: string
           nullable: true
           description: What technical requirements (e.g. software, hardware) are needed for participants of the event.
+        external-id:
+          type: string
+          nullable: true
+          description: If the event is from an external source, this is the unique identifier of the event in that source.
+        last-scraped:
+          type: string
+          nullable: true
+          description: The date that the event was last harvested by TeSS.
+          format: date
+        scraper-record:
+          type: boolean
+          description: Was this event automatically harvested (as opposed to being submitted manually)?
     EventCollection:
       allOf:
         - $ref: '#/components/schemas/FacetedCollection'
         - type: object
+          additionalProperties: false
           properties:
             data:
               minItems: 0
@@ -1062,6 +1089,7 @@ components:
       allOf:
         - $ref: '#/components/schemas/JsonApiResponse'
         - type: object
+          additionalProperties: false
           properties:
             data:
               $ref: '#/components/schemas/MaterialResource'
@@ -1069,11 +1097,13 @@ components:
       allOf:
         - $ref: '#/components/schemas/ResourceObject'
         - type: object
+          additionalProperties: false
           properties:
             attributes:
               $ref: '#/components/schemas/MaterialAttributes'
             relationships:
               type: object
+              additionalProperties: false
               properties:
                 user:
                   $ref: '#/components/schemas/SingleRelationshipObject'
@@ -1081,10 +1111,15 @@ components:
                   $ref: '#/components/schemas/OptionalRelationshipObject'
                 nodes:
                   $ref: '#/components/schemas/MultiRelationshipObject'
+                collections:
+                  $ref: '#/components/schemas/MultiRelationshipObject'
+                events:
+                  $ref: '#/components/schemas/MultiRelationshipObject'
             links:
               $ref: '#/components/schemas/Links'
     MaterialAttributes:
       type: object
+      additionalProperties: false
       properties:
         slug:
           type: string
@@ -1155,13 +1190,13 @@ components:
         scientific-topics:
           type: array
           description: The classification of the material based on the EDAM ontology's
-            scientific topics.
+            topics branch.
           items:
             $ref: '#/components/schemas/OntologyTerm'
         operations:
           type: array
           description: The classification of the material based on the EDAM ontology's
-            operations.
+            operations branch.
           items:
             $ref: '#/components/schemas/OntologyTerm'
         external-resources:
@@ -1211,18 +1246,37 @@ components:
           type: string
           nullable: true
           description: The date that the training material was created.
+          format: date
         date-modified:
           type: string
           nullable: true
           description: The date that the training material was last updated.
+          format: date
         date-published:
           type: string
           nullable: true
           description: The date that the training material was published.
+          format: date
+        status:
+          type: string
+          nullable: true
+          description: The status, or maturity, of the material.
+        other-types:
+          type: string
+          nullable: true
+        last-scraped:
+          type: string
+          nullable: true
+          description: The date that the training material was last harvested by TeSS.
+          format: date
+        scraper-record:
+          type: boolean
+          description: Was this material automatically harvested (as opposed to being submitted manually)?
     MaterialCollection:
       allOf:
         - $ref: '#/components/schemas/FacetedCollection'
         - type: object
+          additionalProperties: false
           properties:
             data:
               minItems: 0
@@ -1234,6 +1288,7 @@ components:
       allOf:
         - $ref: '#/components/schemas/JsonApiResponse'
         - type: object
+          additionalProperties: false
           properties:
             data:
               $ref: '#/components/schemas/ContentProviderResource'
@@ -1241,10 +1296,12 @@ components:
       allOf:
         - $ref: '#/components/schemas/ResourceObject'
         - type: object
+          additionalProperties: false
           properties:
             attributes:
               $ref: '#/components/schemas/ContentProviderAttributes'
             relationships:
+              additionalProperties: false
               type: object
               properties:
                 events:
@@ -1255,6 +1312,7 @@ components:
               $ref: '#/components/schemas/Links'
     ContentProviderAttributes:
       type: object
+      additionalProperties: false
       properties:
         slug:
           type: string
@@ -1282,16 +1340,21 @@ components:
             type: string
         created-at:
           type: string
-          description: The date the content provider was first created on TeSS
+          description: The date the content provider was first created on TeSS.
           format: date
         updated-at:
           type: string
-          description: The date the content provider was last updated on TeSS
+          description: The date the content provider was last updated on TeSS.
           format: date
+        contact:
+          type: string
+          nullable: true
+          description: A point of contact for this content provider.
     ContentProviderCollection:
       allOf:
         - $ref: '#/components/schemas/FacetedCollection'
         - type: object
+          additionalProperties: false
           properties:
             data:
               minItems: 0
@@ -1303,6 +1366,7 @@ components:
       allOf:
         - $ref: '#/components/schemas/JsonApiResponse'
         - type: object
+          additionalProperties: false
           properties:
             data:
               $ref: '#/components/schemas/UserResource'
@@ -1310,6 +1374,7 @@ components:
       allOf:
         - $ref: '#/components/schemas/ResourceObject'
         - type: object
+          additionalProperties: false
           properties:
             attributes:
               $ref: '#/components/schemas/UserAttributes'
@@ -1317,6 +1382,7 @@ components:
               $ref: '#/components/schemas/Links'
     UserAttributes:
       type: object
+      additionalProperties: false
       properties:
         slug:
           type: string
@@ -1345,6 +1411,7 @@ components:
       allOf:
         - $ref: '#/components/schemas/JsonApiResponse'
         - type: object
+          additionalProperties: false
           properties:
             data:
               minItems: 0
@@ -1356,6 +1423,7 @@ components:
       allOf:
         - $ref: '#/components/schemas/JsonApiResponse'
         - type: object
+          additionalProperties: false
           properties:
             data:
               $ref: '#/components/schemas/WorkflowResource'
@@ -1363,11 +1431,13 @@ components:
       allOf:
         - $ref: '#/components/schemas/ResourceObject'
         - type: object
+          additionalProperties: false
           properties:
             attributes:
               $ref: '#/components/schemas/WorkflowAttributes'
             relationships:
               type: object
+              additionalProperties: false
               properties:
                 user:
                   $ref: '#/components/schemas/SingleRelationshipObject'
@@ -1375,6 +1445,7 @@ components:
               $ref: '#/components/schemas/Links'
     WorkflowAttributes:
       type: object
+      additionalProperties: false
       properties:
         slug:
           type: string
@@ -1434,13 +1505,14 @@ components:
         scientific-topics:
           type: array
           description: The classification of the workflow based on the EDAM ontology's
-            scientific topics.
+            topics branch.
           items:
             $ref: '#/components/schemas/OntologyTerm'
     WorkflowCollection:
       allOf:
         - $ref: '#/components/schemas/FacetedCollection'
         - type: object
+          additionalProperties: false
           properties:
             data:
               minItems: 0
@@ -1452,6 +1524,7 @@ components:
       allOf:
         - $ref: '#/components/schemas/JsonApiResponse'
         - type: object
+          additionalProperties: false
           properties:
             data:
               $ref: '#/components/schemas/CollectionResource'
@@ -1459,11 +1532,13 @@ components:
       allOf:
         - $ref: '#/components/schemas/ResourceObject'
         - type: object
+          additionalProperties: false
           properties:
             attributes:
               $ref: '#/components/schemas/CollectionAttributes'
             relationships:
               type: object
+              additionalProperties: false
               properties:
                 events:
                   $ref: '#/components/schemas/MultiRelationshipObject'
@@ -1473,6 +1548,7 @@ components:
               $ref: '#/components/schemas/Links'
     CollectionAttributes:
       type: object
+      additionalProperties: false
       required:
         - title
       properties:
@@ -1507,6 +1583,7 @@ components:
       allOf:
         - $ref: '#/components/schemas/FacetedCollection'
         - type: object
+          additionalProperties: false
           properties:
             data:
               minItems: 0
@@ -1518,6 +1595,7 @@ components:
       allOf:
         - $ref: '#/components/schemas/JsonApiResponse'
         - type: object
+          additionalProperties: false
           properties:
             data:
               $ref: '#/components/schemas/NodeResource'
@@ -1525,20 +1603,25 @@ components:
       allOf:
         - $ref: '#/components/schemas/ResourceObject'
         - type: object
+          additionalProperties: false
           properties:
             attributes:
               $ref: '#/components/schemas/NodeAttributes'
             relationships:
               type: object
+              additionalProperties: false
               properties:
                 events:
                   $ref: '#/components/schemas/MultiRelationshipObject'
                 materials:
                   $ref: '#/components/schemas/MultiRelationshipObject'
+                content-providers:
+                  $ref: '#/components/schemas/MultiRelationshipObject'
             links:
               $ref: '#/components/schemas/Links'
     NodeAttributes:
       type: object
+      additionalProperties: false
       required:
         - name
       properties:
@@ -1570,6 +1653,7 @@ components:
           minItems: 0
           items:
             type: object
+            additionalProperties: false
             properties:
               name:
                 type: string
@@ -1596,6 +1680,7 @@ components:
       allOf:
         - $ref: '#/components/schemas/FacetedCollection'
         - type: object
+          additionalProperties: false
           properties:
             data:
               minItems: 0
@@ -1607,9 +1692,13 @@ components:
       allOf:
         - $ref: '#/components/schemas/JsonApiResponse'
         - type: object
+          additionalProperties: false
           properties:
+            data:
+              type: array
             meta:
               type: object
+              additionalProperties: false
               properties:
                 results-count:
                   type: integer
@@ -1635,11 +1724,13 @@ components:
                     the collection.
             links:
               type: object
+              additionalProperties: false
               allOf:
                 - $ref: '#/components/schemas/Links'
                 - $ref: '#/components/schemas/PaginationLinks'
     OntologyTerm:
       type: object
+      additionalProperties: false
       properties:
         preferred-label:
           type: string
@@ -1647,6 +1738,7 @@ components:
           type: string
     ExternalResource:
       type: object
+      additionalProperties: false
       properties:
         title:
           type: string
@@ -1669,7 +1761,7 @@ components:
           type: string
           nullable: true
           description: A URL that resolves to more information about the external
-            resource represented in a common exchange format (e.g. JSON or XML)
+            resource represented in a common exchange format (e.g. JSON or XML).
         type:
           type: string
           description: The type of external resource. This can be 'tool', 'database,
@@ -1677,6 +1769,7 @@ components:
             other resource type name for other external resources.
     Facet:
       type: object
+      additionalProperties: false
       properties:
         value:
           type: string
@@ -1684,6 +1777,7 @@ components:
           type: integer
     JsonApiResponse:
       type: object
+      additionalProperties: false
       properties:
         errors:
           type: object
@@ -1932,7 +2026,7 @@ components:
     licence:
       name: licence[]
       in: query
-      description: Filter by licence. See http://licenses.opendefinition.org/licenses/groups/all.json
+      description: Filter by licence. Uses SPDX identifiers.
       style: form
       explode: true
       schema:
