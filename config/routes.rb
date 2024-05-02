@@ -116,6 +116,8 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :communities, only: [:show]
+
   get 'elearning_materials' => 'materials#index', defaults: { 'resource_type' => 'e-learning' }
 
   get 'invitees' => 'users#invitees'

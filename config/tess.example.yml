@@ -121,7 +121,13 @@ default: &default
     - CC-BY-NC-SA-4.0
     - CC-BY-ND-4.0
     - CC-BY-SA-4.0
-
+  communities:
+#    uk:
+#      name: UK training
+#      filters:
+#        node: United Kingdom
+#      flag: 🇬🇧
+#      description: Some text about what the community is bla bla bla
 development:
   <<: *default
 
